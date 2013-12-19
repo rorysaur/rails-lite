@@ -13,7 +13,7 @@ class Flash
     @old_flash ||= {}
     @new_flash = {}
   end
-  
+    
   def [](key)
     @flash_now ? @old_flash[key] : @old_flash[key.to_s]
   end

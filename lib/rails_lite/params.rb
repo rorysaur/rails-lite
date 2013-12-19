@@ -1,19 +1,24 @@
 require 'uri'
 
 class Params
-  attr_reader :params
   
-  def initialize(req, route_params)
+  def initialize(request, route_params)
     @params = route_params
-    params_strings = [req.query_string, req.body].compact
+    params_strings = [request.query_string, request.body].compact
     parse_www_encoded_form(params_strings)
+    @params = Hash[@params.map { |key, val| [key.to_sym, val] }]
   end
 
   def [](key)
+    @params[key]
+  end
+  
+  def has_key?(key)
+    @params.has_key?(key)
   end
 
-  def to_s
-  end
+  # def to_s
+  # end
 
   private
   
@@ -46,8 +51,8 @@ class Params
         params[pair.first] = pair.last
       end
     end
-    
-    @params.merge(nested_hash(params))
+      
+    @params.merge!(nested_hash(params))
           
     nil
   end

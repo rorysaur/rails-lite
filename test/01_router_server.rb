@@ -6,11 +6,14 @@ require_relative '../lib/rails_lite'
 server = WEBrick::HTTPServer.new :Port => 8080
 trap('INT') { server.shutdown }
 
-class StatusController < ControllerBase
+class StatusesController < ControllerBase
+  
+  protect_from_forgery
+  
   def index
     statuses = ["s1", "s2", "s3"]
 
-    render_content(statuses.to_json, "text/json")
+    render_content(flash[:message], "text/text")
   end
 
   def show
@@ -18,9 +21,13 @@ class StatusController < ControllerBase
       "status ##{params[:id]}, thing_id: #{params[:thing_id]}", "text/text"
     )
   end
+  
+  def new
+    render :new
+  end
 end
 
-class UserController < ControllerBase
+class UsersController < ControllerBase
   def index
     users = ["u1", "u2", "u3"]
 
@@ -33,9 +40,12 @@ server.mount_proc '/' do |req, res|
   router.draw do
     get(
       Regexp.new("^/statuses\/(?<id>\\d+)\/thing\/(?<thing_id>\\d+)$"),
-      StatusController,
+      StatusesController,
       :show)
-    get Regexp.new("^/users$"), UserController, :index
+    get Regexp.new("^/statuses/new$"), StatusesController, :new
+    post Regexp.new("^/statuses"), StatusesController, :index
+    get Regexp.new(""), StatusesController, :index
+    get Regexp.new("^/users$"), UsersController, :index
 
     # uncomment this when you get to route params
 #    get Regexp.new("^/statuses/(?<id>\\d+)$"), StatusController, :show

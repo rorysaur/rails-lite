@@ -1,9 +1,16 @@
 <html>
   <!-- Form to create a tweet -->
   <form action="/statuses" method="POST">
+    
+    <input type="hidden" name="authenticity_token"
+      value="<%= session[:authenticity_token] %>">
+      
     <label id="status_title">
       <input type="text" name="status[title]" id="status_title">
 
       <button>Tweet, baby, tweet!</button>
   </form>
+  
+  <%= link_to "Google!", "http://www.google.com" %>
+  <%= link_to "New Status", new_statuses_url %>
 </html>
